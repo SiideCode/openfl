@@ -1,5 +1,7 @@
 package openfl.globalization;
 
+import lime.system.Locale;
+
 #if !flash
 @:final class LocaleID
 {
@@ -40,7 +42,12 @@ package openfl.globalization;
 			// not be the right choice when using JS Intl types
 			requestedLocaleIDName = untyped Intl.DateTimeFormat().resolvedOptions().locale;
 			#elseif lime
-			requestedLocaleIDName = lime.system.Locale.currentLocale;
+			var myass = lime.system.Locale.getLocale()[0];
+			requestedLocaleIDName = myass.language;
+			if (myass.country != null)
+			{
+				requestedLocaleIDName += "-" + myass.country;
+			}
 			#else
 			requestedLocaleIDName = openfl.system.Capabilities.language;
 			#end

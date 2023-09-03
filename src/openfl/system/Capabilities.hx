@@ -267,7 +267,7 @@ import sys.io.Process;
 
 		The server string is `L`.
 	**/
-	public static var language(get, never):String;
+	public static var language(get, never):Array<String>;
 
 	/**
 		Specifies whether read access to the user's hard disk has been
@@ -579,51 +579,47 @@ import sys.io.Process;
 	// Getters & Setters
 	@:noCompletion private static inline function get_cpuArchitecture():String
 	{
-		// TODO: Check architecture
-		#if (mobile && !simulator && !emulator)
+		#if (mobile && !simulator && !emulator && cpp)
+		if (cpp.NativeSys.sys_is64()) return "ARM64";
+		else
+			return "ARM";
+		#end
+		#if (mobile && !simulator && !emulator && !cpp)
 		return "ARM";
-		#else
+		#end
+
+		#if (!mobile || simulator || emulator && cpp)
+		if (cpp.NativeSys.sys_is64()) return "x86_64";
+		else
+			return "x86";
+		#end
+		#if (!mobile || simulator || emulator && !cpp)
 		return "x86";
 		#end
 	}
 
-	@:noCompletion private static function get_language():String
+	@:noCompletion private static function get_language():Array<String>
 	{
+		var language:Array<String> = null;
 		#if lime
-		var language = Locale.currentLocale.language;
+		var heelp = Locale.getLocale();
+		var ourString = null;
 
-		if (language != null)
+		if (heelp != null)
 		{
-			language = language.toLowerCase();
-
-			switch (language)
+			for (i in 0...heelp.length)
 			{
-				case "cs", "da", "nl", "en", "fi", "fr", "de", "hu", "it", "ja", "ko", "nb", "pl", "pt", "ru", "es", "sv", "tr":
-					return language;
-
-				case "zh":
-					var region = Locale.currentLocale.region;
-
-					if (region != null)
-					{
-						switch (region.toUpperCase())
-						{
-							case "TW", "HANT":
-								return "zh-TW";
-
-							default:
-						}
-					}
-
-					return "zh-CN";
-
-				default:
-					return "xu";
+				ourString = heelp[i].language.toLowerCase();
+				if (heelp[i].country != null)
+				{
+					ourString += "-" + heelp[i].country.toUpperCase();
+				}
+				language.push(ourString);
 			}
 		}
 		#end
 
-		return "en";
+		return language;
 	}
 
 	@:noCompletion private static inline function get_manufacturer():String

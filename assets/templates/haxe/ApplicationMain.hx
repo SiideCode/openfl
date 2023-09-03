@@ -53,6 +53,7 @@ class ApplicationMain
 			allowHighDPI: ::allowHighDPI::,
 			alwaysOnTop: ::alwaysOnTop::,
 			borderless: ::borderless::,
+			skipTaskBar: ::skipTaskBar::,
 			// display: ::display::,
 			element: null,
 			frameRate: ::fps::,
