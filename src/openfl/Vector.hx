@@ -2549,7 +2549,7 @@ abstract Vector<T>(VectorData<T>)
 	{
 		if (array != null)
 		{
-			this = VectorData.ofArray(array);
+			this = ofArray(array);
 		}
 		else
 		{
@@ -2687,9 +2687,16 @@ abstract Vector<T>(VectorData<T>)
 		this.unshift(x);
 	}
 
-	public inline static function ofArray<T>(a:Array<Dynamic>):Vector<T>
+	public inline static function ofArray<T>(a:Array<T>):Vector<T>
 	{
-		return VectorData.ofArray(a);
+		if (a == null) return null;
+
+		var vec = new VectorData<T>();
+		for (i in 0...a.length)
+		{
+			vec[i] = a[i];
+		}
+		return vec;
 	}
 
 	public inline static function convert<T, U>(v:Vector<T>):Vector<U>
