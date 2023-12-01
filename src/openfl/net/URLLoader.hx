@@ -146,6 +146,7 @@ class URLLoader extends EventDispatcher
 	**/
 	public var dataFormat:URLLoaderDataFormat;
 
+	@:privateAccess
 	@:noCompletion private var __httpRequest:#if (!lime || display || macro || doc_gen) Dynamic #else _IHTTPRequest #end; // TODO: Better (non-private) solution
 
 	/**
@@ -292,6 +293,8 @@ class URLLoader extends EventDispatcher
 			var httpRequest = new HTTPRequest<ByteArray>();
 			__prepareRequest(httpRequest, request);
 
+			__httpRequest = httpRequest;
+
 			httpRequest.load()
 				.onProgress(httpRequest_onProgress)
 				.onError(httpRequest_onError)
@@ -309,6 +312,8 @@ class URLLoader extends EventDispatcher
 		{
 			var httpRequest = new HTTPRequest<String>();
 			__prepareRequest(httpRequest, request);
+
+			__httpRequest = httpRequest;
 
 			httpRequest.load()
 				.onProgress(httpRequest_onProgress)
@@ -411,20 +416,23 @@ class URLLoader extends EventDispatcher
 		__dispatchResponseStatus();
 		__dispatchStatus();
 
+		trace("Data format is: " + dataFormat);
+
 		#if (lime && !doc_gen)
 		// some targets won't allow us to cast to HTTPRequest<Dynamic>
-		if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end (__httpRequest, _HTTPRequest_Bytes))
+		if (dataFormat == BINARY)
 		{
-			var bytesRequest:_HTTPRequest_Bytes<Bytes> = cast __httpRequest;
+			@:privateAccess
+			var bytesRequest:HTTPRequest<ByteArray> = cast __httpRequest;
 			data = bytesRequest.responseData;
 		}
-		else if (#if (haxe_ver >= 4.2) Std.isOfType #else Std.is #end (__httpRequest, _HTTPRequest_String))
+		else if (dataFormat == TEXT || dataFormat == VARIABLES)
 		{
-			var stringRequest:_HTTPRequest_String<String> = cast __httpRequest;
+			@:privateAccess
+			var stringRequest:HTTPRequest<String> = cast __httpRequest;
 			data = stringRequest.responseData;
 		}
 		#end
-		#if !hl
 		// can't compare a string against an integer in HashLink
 		if (error == 403)
 		{
@@ -433,7 +441,6 @@ class URLLoader extends EventDispatcher
 			dispatchEvent(event);
 		}
 		else
-		#end
 		{
 			var event = new IOErrorEvent(IOErrorEvent.IO_ERROR);
 			event.text = Std.string(error);
