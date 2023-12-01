@@ -1,4 +1,24 @@
-9.3.0 (??/??/2023)
+
+9.3.2 (11/08/2023)
+------------------
+
+* Fixed playback of very long sounds by changing arithmetic to avoid integer overflow
+* Fixed exception when calling `draw()` on `BitmapData` when `readable` is `false`
+* Fixed `Sound` not playing when calling `play()` immediately after `load()`, but before `Event.COMPLETE`
+* Fixed `Sound` incorrectly throwing exception about valid `SampleDataEvent` range when listener generates zero samples
+* Fixed `Sound` incorrectly throwing exception about valid `SampleDataEvent` range when `play()` is called between `load()` and `Event.COMPLETE`
+* Fixed `Sound` incorrectly continuing to dispatch `SampleDataEvent.SAMPLE_DATA` after a previous dispatch generated zero samples
+* Fixed `SoundChannel` ignoring `stop()` when generating audio with `SampleDataEvent.SAMPLE_DATA`
+* Fixed `SoundChannel` failing to dispatch `Event.SOUND_COMPLETE` when `SampleDataEvent.SAMPLE_DATA` listener generates zero samples or is stopped
+* Fixed `FileReferenceList` not dispatching `Event.CANCEL` when zero files are selected on html5 target, to better match `FileReference`
+* Improved error message when calling `Sound.fromFile()` when file cannot be loaded
+
+9.3.1 (10/17/2023)
+------------------
+
+* Compatibility fixes for Haxe 3 and Haxe 4.0.x and the npm release
+
+9.3.0 (10/16/2023)
 ------------------
 
 * Added `SampleDataEvent.SAMPLE_DATA` to `Sound` class
@@ -15,7 +35,8 @@
 * Added support for referencing environment variables, like `%PROGRAMFILES%` in `File` path values on Windows
 * Added various enum, event, and error types to improve parity with types available in Adobe AIR
 * Added basic implementation of `flash.text.StageText` that falls back to `TextField`, similar to AIR desktop
-* Replaced `String` with `EventType` in `FileListEvent` for better compile-time checks
+* Replaced `String` with `EventType` in `FileListEvent`, `DatagramSocketEvent`, and `ServerSocketConnectEvent` for better compile-time checks
+* Fixed Flash/AIR compatibility for `DatagramSocketEvent`, and `ServerSocketConnectEvent` classes
 * Fixed wrong type on `size` for `FileReference` and `File` to make it `Float` instead of `Int` (Some code may need to use `Std.int()` after this change)
 * Fixed missing `controlKey` property on `MouseEvent`
 * Fixed missing `Event.OPEN` dispatch from `download()` on `FileReference`
@@ -39,7 +60,10 @@
 * Fixed `FlashGraphics` being included in other targets under some circumstances by adding `#if flash` conditional
 * Fixed `openfl.globalization`, `Namespace`, and `QName` issues in npm version
 * Fixed incorrect condition that caused issues in `ShapeCache`
+* Fixed `Socket` incorrectly dispatching `Event.CONNECT` for unconnected sockets on Windows
+* Fixed wrong caps/joints in line style returned by `readGraphicsData()`
 * Added `openfl_hack_fix_chrome_text` define to workaround a bug in Chrome that garbles text
+* Added `openfl_disable_text_measurement_cache` define to allow the `TextField` shape measurement cache to be optionally disabled
 
 9.2.2 (05/31/2023)
 ------------------
