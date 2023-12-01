@@ -1,5 +1,6 @@
 package openfl.text;
 
+import sys.thread.Mutex;
 #if !flash
 import haxe.Timer;
 import openfl.text._internal.HTMLParser;
@@ -32,6 +33,8 @@ import lime.ui.KeyModifier;
 #if (js && html5)
 import js.html.DivElement;
 #end
+
+using StringTools;
 
 /**
 	The TextField class is used to create display objects for text display and
@@ -691,6 +694,7 @@ class TextField extends InteractiveObject
 	@:noCompletion private var __htmlText:UTF8String;
 	@:noCompletion private var __textEngine:TextEngine;
 	@:noCompletion private var __textFormat:TextFormat;
+	@:noCompletion private var __passwordTimer:Timer;
 	#if (js && html5)
 	@:noCompletion private var __div:DivElement;
 	@:noCompletion private var __renderedOnCanvasWhileOnDOM:Bool = false;
@@ -2435,14 +2439,10 @@ class TextField extends InteractiveObject
 
 	@:noCompletion private function __updateText(value:String):Void
 	{
-		#if (js && html5)
-		if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM)
-		{
-			__forceCachedBitmapUpdate = __text != value;
-		}
-		#end
-
 		// applies maxChars and restrict on text
+		var erasing:Bool = false;
+
+		if (__textEngine.text.length > value.length) erasing = true;
 
 		__textEngine.text = value;
 		__text = __textEngine.text;
@@ -2475,7 +2475,7 @@ class TextField extends InteractiveObject
 			}
 		}
 
-		if (!__displayAsPassword #if (js && html5) || (DisplayObject.__supportDOM && !__renderedOnCanvasWhileOnDOM) #end)
+		if (!__displayAsPassword)
 		{
 			__textEngine.text = __text;
 		}
@@ -2489,8 +2489,30 @@ class TextField extends InteractiveObject
 				mask += "*";
 			}
 
+			if (!erasing) mask = mask.substring(0, text.length - 1) + text.substring(text.length - 1);
+
+			if (__textEngine.text.charAt(__textEngine.text.length) != "*" || __textEngine.text != "" && !erasing)
+			{
+				if (__passwordTimer != null) __passwordTimer.stop();
+				__passwordTimer = Timer.delay(__startPasswordTimer, 2000);
+			}
+
 			__textEngine.text = mask;
 		}
+	}
+
+	@:noCompletion private function __startPasswordTimer():Void
+	{
+		var length = text.length;
+		var mask = "";
+
+		for (i in 0...length)
+		{
+			mask += "*";
+		}
+
+		__textEngine.text = mask;
+		__textEngine.update();
 	}
 
 	@:noCompletion private override function __updateTransforms(overrideTransform:Matrix = null):Void
