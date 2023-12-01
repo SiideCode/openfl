@@ -416,19 +416,15 @@ class URLLoader extends EventDispatcher
 		__dispatchResponseStatus();
 		__dispatchStatus();
 
-		trace("Data format is: " + dataFormat);
-
 		#if (lime && !doc_gen)
 		// some targets won't allow us to cast to HTTPRequest<Dynamic>
 		if (dataFormat == BINARY)
 		{
-			@:privateAccess
 			var bytesRequest:HTTPRequest<ByteArray> = cast __httpRequest;
 			data = bytesRequest.responseData;
 		}
 		else if (dataFormat == TEXT || dataFormat == VARIABLES)
 		{
-			@:privateAccess
 			var stringRequest:HTTPRequest<String> = cast __httpRequest;
 			data = stringRequest.responseData;
 		}
