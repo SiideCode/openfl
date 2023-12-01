@@ -1,6 +1,5 @@
 package openfl.text;
 
-import sys.thread.Mutex;
 #if !flash
 import haxe.Timer;
 import openfl.text._internal.HTMLParser;
@@ -2494,7 +2493,7 @@ class TextField extends InteractiveObject
 			if (__textEngine.text.charAt(__textEngine.text.length) != "*" || __textEngine.text != "" && !erasing)
 			{
 				if (__passwordTimer != null) __passwordTimer.stop();
-				__passwordTimer = Timer.delay(__startPasswordTimer, 2000);
+				__passwordTimer = Timer.delay(__startPasswordTimer, 1000);
 			}
 
 			__textEngine.text = mask;
