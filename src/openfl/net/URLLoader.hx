@@ -430,7 +430,7 @@ class URLLoader extends EventDispatcher
 		}
 		#end
 		// can't compare a string against an integer in HashLink
-		if (error == 403)
+		if (Std.string(error) == Std.string(403))
 		{
 			var event = new SecurityErrorEvent(SecurityErrorEvent.SECURITY_ERROR);
 			event.text = Std.string(error);
