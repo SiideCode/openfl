@@ -1709,6 +1709,12 @@ class TextField extends InteractiveObject
 	{
 		if (__inputEnabled && stage != null)
 		{
+			if (__passwordTimer != null)
+			{
+				__passwordTimer.stop();
+			}
+			__onPasswordTimerEnd();
+			
 			#if lime
 			stage.window.textInputEnabled = false;
 			stage.window.onTextInput.remove(window_onTextInput);
@@ -2228,12 +2234,7 @@ class TextField extends InteractiveObject
 
 	@:noCompletion private function __stopTextInput():Void
 	{
-		var disableInput = #if (js && html5) (DisplayObject.__supportDOM ? __renderedOnCanvasWhileOnDOM : true) #else true #end;
-
-		if (disableInput)
-		{
-			__disableInput();
-		}
+		__disableInput();
 	}
 
 	@:noCompletion private function __updateLayout():Void
@@ -2493,14 +2494,14 @@ class TextField extends InteractiveObject
 			if (__textEngine.text.charAt(__textEngine.text.length) != "*" || __textEngine.text != "" && !erasing)
 			{
 				if (__passwordTimer != null) __passwordTimer.stop();
-				__passwordTimer = Timer.delay(__startPasswordTimer, 1000);
+				__passwordTimer = Timer.delay(__onPasswordTimerEnd, 1000);
 			}
 
 			__textEngine.text = mask;
 		}
 	}
 
-	@:noCompletion private function __startPasswordTimer():Void
+	@:noCompletion private function __onPasswordTimerEnd():Void
 	{
 		var length = text.length;
 		var mask = "";
