@@ -29,9 +29,6 @@ import lime.system.Clipboard;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 #end
-#if (js && html5)
-import js.html.DivElement;
-#end
 
 using StringTools;
 
@@ -694,120 +691,6 @@ class TextField extends InteractiveObject
 	@:noCompletion private var __textEngine:TextEngine;
 	@:noCompletion private var __textFormat:TextFormat;
 	@:noCompletion private var __passwordTimer:Timer;
-	#if (js && html5)
-	@:noCompletion private var __div:DivElement;
-	@:noCompletion private var __renderedOnCanvasWhileOnDOM:Bool = false;
-	@:noCompletion private var __forceCachedBitmapUpdate:Bool = false;
-	#end
-
-	#if openfljs
-	@:noCompletion private static function __init__()
-	{
-		untyped Object.defineProperties(TextField.prototype, {
-			"antiAliasType": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_antiAliasType (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_antiAliasType (v); }")
-			},
-			"autoSize": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_autoSize (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_autoSize (v); }")
-			},
-			"background": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_background (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_background (v); }")
-			},
-			"backgroundColor": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_backgroundColor (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_backgroundColor (v); }")
-			},
-			"border": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_border (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_border (v); }")
-			},
-			"borderColor": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_borderColor (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_borderColor (v); }")
-			},
-			"bottomScrollV": {get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_bottomScrollV (); }")},
-			"defaultTextFormat": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_defaultTextFormat (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_defaultTextFormat (v); }")
-			},
-			"displayAsPassword": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_displayAsPassword (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_displayAsPassword (v); }")
-			},
-			"embedFonts": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_embedFonts (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_embedFonts (v); }")
-			},
-			"gridFitType": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_gridFitType (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_gridFitType (v); }")
-			},
-			"htmlText": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_htmlText (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_htmlText (v); }")
-			},
-			"length": {get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_length (); }")},
-			"maxChars": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_maxChars (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_maxChars (v); }")
-			},
-			"maxScrollH": {get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_maxScrollH (); }")},
-			"maxScrollV": {get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_maxScrollV (); }")},
-			"mouseWheelEnabled": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_mouseWheelEnabled (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_mouseWheelEnabled (v); }")
-			},
-			"multiline": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_multiline (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_multiline (v); }")
-			},
-			"numLines": {get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_numLines (); }")},
-			"restrict": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_restrict (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_restrict (v); }")
-			},
-			"scrollH": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_scrollH (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_scrollH (v); }")
-			},
-			"scrollV": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_scrollV (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_scrollV (v); }")
-			},
-			"selectable": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_selectable (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_selectable (v); }")
-			},
-			"selectionBeginIndex": {get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_selectionBeginIndex (); }")},
-			"selectionEndIndex": {get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_selectionEndIndex (); }")},
-			"sharpness": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_sharpness (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_sharpness (v); }")
-			},
-			"text": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_text (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_text (v); }")
-			},
-			"textColor": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_textColor (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_textColor (v); }")
-			},
-			"textHeight": {get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_textHeight (); }")},
-			"textWidth": {get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_textWidth (); }")},
-			"type": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_type (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_type (v); }")
-			},
-			"wordWrap": {
-				get: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function () { return this.get_wordWrap (); }"),
-				set: untyped #if haxe4 js.Syntax.code #else __js__ #end ("function (v) { return this.set_wordWrap (v); }")
-			},
-		});
-	}
-	#end
 
 	/**
 		Creates a new TextField instance. After you create the TextField instance,
@@ -1714,7 +1597,7 @@ class TextField extends InteractiveObject
 				__passwordTimer.stop();
 			}
 			__onPasswordTimerEnd();
-			
+
 			#if lime
 			stage.window.textInputEnabled = false;
 			stage.window.onTextInput.remove(window_onTextInput);
@@ -2481,10 +2364,9 @@ class TextField extends InteractiveObject
 		}
 		else
 		{
-			var length = text.length;
 			var mask = "";
 
-			for (i in 0...length)
+			for (i in 0...text.length)
 			{
 				mask += "*";
 			}
@@ -2503,10 +2385,9 @@ class TextField extends InteractiveObject
 
 	@:noCompletion private function __onPasswordTimerEnd():Void
 	{
-		var length = text.length;
 		var mask = "";
 
-		for (i in 0...length)
+		for (i in 0...text.length)
 		{
 			mask += "*";
 		}
@@ -2752,38 +2633,7 @@ class TextField extends InteractiveObject
 
 		value = HTMLParser.parse(value, multiline, __styleSheet, __textFormat, __textEngine.textFormatRanges);
 
-		#if (js && html5)
-		// if (DisplayObject.__supportDOM)
-		// {
-		// 	// TODO: Why is this parsing text format ranges, only to ignore them?
-		// 	// Should this skip the parser entirely?
-		// 	if (__textEngine.textFormatRanges.length > 1)
-		// 	{
-		// 		__textEngine.textFormatRanges.splice(1, __textEngine.textFormatRanges.length - 1);
-		// 	}
-
-		// 	var range = __textEngine.textFormatRanges[0];
-		// 	range.format = __textFormat;
-		// 	range.start = 0;
-
-		// 	if (__renderedOnCanvasWhileOnDOM)
-		// 	{
-		// 		range.end = value.length;
-		// 		__updateText(value);
-		// 	}
-		// 	else
-		// 	{
-		// 		range.end = __htmlText.length;
-		// 		__updateText(__htmlText);
-		// 	}
-		// }
-		// else
-		{
-			__updateText(value);
-		}
-		#else
 		__updateText(value);
-		#end
 
 		return value;
 	}
@@ -3352,7 +3202,7 @@ class TextField extends InteractiveObject
 		{
 			__updateLayout();
 
-			var delimiters:Array<String> = ['\n', '.', '!', '?', ',', ' ', ';', ':', '(', ')', '-', '_', '/'];
+			var delimiters:Array<String> = ["\n", ".", "!", "?", ",", " ", ";", ":", "(", ")", "-", "_", "/"];
 
 			var txtStr:String = __text;
 			var leftPos:Int = -1;
