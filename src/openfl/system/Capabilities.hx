@@ -604,7 +604,7 @@ import sys.io.Process;
 
 	@:noCompletion private static function get_language():Array<String>
 	{
-		var language:Array<String> = null;
+		var language:Array<String> = [];
 		#if lime
 		var heelp = Locale.getLocale();
 		var ourString = null;
@@ -614,10 +614,10 @@ import sys.io.Process;
 			for (i in 0...heelp.length)
 			{
 				ourString = heelp[i].language.toLowerCase();
-				if (heelp[i].country != null)
+				/*if (heelp[i].country != null)
 				{
 					ourString += "-" + heelp[i].country.toUpperCase();
-				}
+				}*/
 				language.push(ourString);
 			}
 		}

@@ -11,7 +11,7 @@ import openfl.utils._internal.Log;
 import openfl.display.DisplayObject;
 import openfl.display.Graphics;
 import openfl.display.InteractiveObject;
-import opnfl.display.Stage;
+import openfl.display.Stage;
 import openfl.errors.RangeError;
 import openfl.events.Event;
 import openfl.events.FocusEvent;
@@ -1591,7 +1591,7 @@ class TextField extends InteractiveObject
 	@:noCompletion private function __disableInput():Void
 	{
 		if (__inputEnabled && stage != null)
-        {
+		{
 			#if lime
 			stage.window.textInputEnabled = false;
 			stage.window.onTextInput.remove(window_onTextInput);
@@ -2387,7 +2387,6 @@ class TextField extends InteractiveObject
 		}
 
 		__textEngine.text = mask;
-		__textEngine.update();
 	}
 
 	@:noCompletion private override function __updateTransforms(overrideTransform:Matrix = null):Void
@@ -3130,12 +3129,12 @@ class TextField extends InteractiveObject
 	@:noCompletion private function this_onFocusOut(event:FocusEvent):Void
 	{
 		__stopCursorTimer();
-        
-        if (__passwordTimer != null)
+
+		if (__passwordTimer != null && __displayAsPassword)
 		{
 			__passwordTimer.stop();
+			__onPasswordTimerEnd();
 		}
-		__onPasswordTimerEnd();
 
 		// even if the related object is another TextField, we should stop
 		// text input. this ensures that any incomplete IME input is committed.
