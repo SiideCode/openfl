@@ -2085,7 +2085,7 @@ class TextField extends InteractiveObject
 			__selectionIndex = __caretIndex;
 		}
 
-		var enableInput = #if (js && html5) (DisplayObject.__supportDOM ? __renderedOnCanvasWhileOnDOM : true) #else true #end;
+		var enableInput = true;
 
 		if (enableInput)
 		{
@@ -2386,7 +2386,9 @@ class TextField extends InteractiveObject
 			mask += "*";
 		}
 
-		__textEngine.text = mask;
+		if (__displayAsPassword) __textEngine.text = mask;
+		else
+			__textEngine.text = text;
 	}
 
 	@:noCompletion private override function __updateTransforms(overrideTransform:Matrix = null):Void
@@ -3041,17 +3043,6 @@ class TextField extends InteractiveObject
 
 				var setDirty = true;
 
-				#if (js && html5)
-				if (DisplayObject.__supportDOM)
-				{
-					if (__renderedOnCanvasWhileOnDOM)
-					{
-						__forceCachedBitmapUpdate = true;
-					}
-					setDirty = false;
-				}
-				#end
-
 				if (setDirty)
 				{
 					__dirty = true;
@@ -3092,13 +3083,6 @@ class TextField extends InteractiveObject
 
 				__stopCursorTimer();
 				__startCursorTimer();
-
-				#if (js && html5)
-				if (DisplayObject.__supportDOM && __renderedOnCanvasWhileOnDOM)
-				{
-					__forceCachedBitmapUpdate = true;
-				}
-				#end
 			}
 		}
 	}
@@ -3133,8 +3117,10 @@ class TextField extends InteractiveObject
 		if (__passwordTimer != null && __displayAsPassword)
 		{
 			__passwordTimer.stop();
-			__onPasswordTimerEnd();
 		}
+
+		__onPasswordTimerEnd();
+		// __textEngine.text = text;
 
 		// even if the related object is another TextField, we should stop
 		// text input. this ensures that any incomplete IME input is committed.
@@ -3170,11 +3156,8 @@ class TextField extends InteractiveObject
 		__caretIndex = __getPosition(mouseX + scrollH, mouseY);
 		__selectionIndex = __caretIndex;
 
-		if (!DisplayObject.__supportDOM)
-		{
-			__dirty = true;
-			__setRenderDirty();
-		}
+		__dirty = true;
+		__setRenderDirty();
 
 		// stage could be null if the TextField was removed from stage in an
 		// earlier listener
@@ -3224,16 +3207,7 @@ class TextField extends InteractiveObject
 					setSelection(leftPos, rightPos);
 
 					var setDirty:Bool = true;
-					#if openfl_html5
-					if (DisplayObject.__supportDOM)
-					{
-						if (__renderedOnCanvasWhileOnDOM)
-						{
-							__forceCachedBitmapUpdate = true;
-						}
-						setDirty = false;
-					}
-					#end
+
 					if (setDirty)
 					{
 						__dirty = true;
