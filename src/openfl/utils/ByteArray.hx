@@ -1079,6 +1079,8 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData
 	{
 		#if display
 		return 0;
+		#elseif openfljs
+		return this == null ? 0 : this.__length;
 		#else
 		return this == null ? 0 : this.length;
 		#end
@@ -1151,6 +1153,8 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData
 		The number of bytes allocated. May be ~50% larger than `length`.
 	**/
 	@:noCompletion private var __allocated:Int;
+
+	@:noCompletion private var __amf3Reader:AMF3Reader;
 
 	/**
 		An alias for `length`, except guaranteed not to have side effects. This
@@ -1789,16 +1793,6 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData
 	@:noCompletion private inline function set_endian(value:Endian):Endian
 	{
 		return __endian = value;
-	}
-
-	@:noCompletion private inline function get___length():Int
-	{
-		return length;
-	}
-
-	@:noCompletion private inline function set___length(value:Int):Int
-	{
-		return length = value;
 	}
 }
 #else
