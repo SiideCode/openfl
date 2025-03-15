@@ -1794,6 +1794,16 @@ abstract ByteArray(ByteArrayData) from ByteArrayData to ByteArrayData
 	{
 		return __endian = value;
 	}
+
+	@:noCompletion private inline function get___length():Int
+	{
+		return length;
+	}
+
+	@:noCompletion private inline function set___length(value:Int):Int
+	{
+		return length = value;
+	}
 }
 #else
 #if flash

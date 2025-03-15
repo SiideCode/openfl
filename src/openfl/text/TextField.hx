@@ -1,6 +1,5 @@
 package openfl.text;
 
-#if !flash
 import haxe.Timer;
 import openfl.text._internal.HTMLParser;
 import openfl.text._internal.TextEngine;
@@ -31,8 +30,7 @@ import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 #end
 
-using StringTools;
-
+// TODO: reimplement this: last letter of the textfield is visible for 1-2 seconds after you input it (unless you input another letter, or unfocus, or start erasing)
 /**
 	The TextField class is used to create display objects for text display and
 	input. <ph outputclass="flexonly">You can use the TextField class to
@@ -721,7 +719,6 @@ class TextField extends InteractiveObject
 	@:noCompletion private var __htmlText:UTF8String;
 	@:noCompletion private var __textEngine:TextEngine;
 	@:noCompletion private var __textFormat:TextFormat;
-	@:noCompletion private var __passwordTimer:Timer;
 
 	/**
 		Creates a new TextField instance. After you create the TextField instance,
@@ -2416,9 +2413,6 @@ class TextField extends InteractiveObject
 	@:noCompletion private function __updateText(value:String):Void
 	{
 		// applies maxChars and restrict on text
-		var erasing:Bool = false;
-
-		if (__textEngine.text.length > value.length) erasing = true;
 
 		__textEngine.text = value;
 		__text = __textEngine.text;
@@ -2457,37 +2451,16 @@ class TextField extends InteractiveObject
 		}
 		else
 		{
+			var length = text.length;
 			var mask = "";
 
-			for (i in 0...text.length)
+			for (i in 0...length)
 			{
 				mask += "*";
 			}
 
-			if (!erasing) mask = mask.substring(0, text.length - 1) + text.substring(text.length - 1);
-
-			if (__textEngine.text.charAt(__textEngine.text.length) != "*" || __textEngine.text != "" && !erasing)
-			{
-				if (__passwordTimer != null) __passwordTimer.stop();
-				__passwordTimer = Timer.delay(__onPasswordTimerEnd, 1000);
-			}
-
 			__textEngine.text = mask;
 		}
-	}
-
-	@:noCompletion private function __onPasswordTimerEnd():Void
-	{
-		var mask = "";
-
-		for (i in 0...text.length)
-		{
-			mask += "*";
-		}
-
-		if (__displayAsPassword) __textEngine.text = mask;
-		else
-			__textEngine.text = text;
 	}
 
 	@:noCompletion private override function __updateTransforms(overrideTransform:Matrix = null):Void
@@ -3236,14 +3209,6 @@ class TextField extends InteractiveObject
 	{
 		__stopCursorTimer();
 
-		if (__passwordTimer != null && __displayAsPassword)
-		{
-			__passwordTimer.stop();
-		}
-
-		__onPasswordTimerEnd();
-		// __textEngine.text = text;
-
 		// even if the related object is another TextField, we should stop
 		// text input. this ensures that any incomplete IME input is committed.
 		__stopTextInput();
@@ -3322,46 +3287,6 @@ class TextField extends InteractiveObject
 		if (mouseWheelEnabled)
 		{
 			scrollV = Std.int(Math.min(scrollV - event.delta, maxScrollV));
-		}
-	}
-
-	@:noCompletion private function this_onDoubleClick(event:MouseEvent):Void
-	{
-		if (selectable)
-		{
-			__updateLayout();
-
-			var delimiters:Array<String> = ["\n", ".", "!", "?", ",", " ", ";", ":", "(", ")", "-", "_", "/"];
-
-			var txtStr:String = __text;
-			var leftPos:Int = -1;
-			var rightPos:Int = txtStr.length;
-			var pos:Int = 0;
-			var startPos:Int = Std.int(Math.max(__caretIndex, 1));
-			if (txtStr.length > 0 && __caretIndex >= 0 && rightPos >= __caretIndex)
-			{
-				for (c in delimiters)
-				{
-					pos = txtStr.lastIndexOf(c, startPos - 1);
-					if (pos > leftPos) leftPos = pos + 1;
-
-					pos = txtStr.indexOf(c, startPos);
-					if (pos < rightPos && pos != -1) rightPos = pos;
-				}
-
-				if (leftPos != rightPos)
-				{
-					setSelection(leftPos, rightPos);
-
-					var setDirty:Bool = true;
-
-					if (setDirty)
-					{
-						__dirty = true;
-						__setRenderDirty();
-					}
-				}
-			}
 		}
 	}
 
@@ -3604,6 +3529,3 @@ class TextField extends InteractiveObject
 		dispatchEvent(new Event(Event.CHANGE, true));
 	}
 }
-#else
-typedef TextField = flash.text.TextField;
-#end
